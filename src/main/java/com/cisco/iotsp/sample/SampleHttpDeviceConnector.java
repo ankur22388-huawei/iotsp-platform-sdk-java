@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.sample;
 
 import com.cisco.iotsp.client.http_device_connector.ApiException;

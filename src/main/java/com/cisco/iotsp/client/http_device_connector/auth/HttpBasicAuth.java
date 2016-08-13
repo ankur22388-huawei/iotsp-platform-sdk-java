@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 /**
  * API documentation for Http Device Connector
  * These are all the APIs for Http Device Connector

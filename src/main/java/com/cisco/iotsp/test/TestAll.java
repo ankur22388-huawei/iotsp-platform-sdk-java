@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.test;
 
 import java.util.UUID;
@@ -5,9 +6,7 @@ import java.util.UUID;
 import com.cisco.iotsp.client.things.model.Thing;
 import com.cisco.iotsp.helper.AuthenticationHelper;
 import com.cisco.iotsp.sample.SampleAccounts;
-import com.cisco.iotsp.sample.SampleAccountsCreate;
 import com.cisco.iotsp.sample.SampleClaims;
-import com.cisco.iotsp.sample.SampleClaimsCreate;
 import com.cisco.iotsp.sample.SampleLastNObservationsApi;
 import com.cisco.iotsp.sample.SampleObservations;
 import com.cisco.iotsp.sample.SamplePresence;
@@ -16,17 +15,16 @@ import com.cisco.iotsp.sample.SampleSchemasCreate;
 import com.cisco.iotsp.sample.SampleThings;
 import com.cisco.iotsp.sample.SampleThingsCreate;
 import com.cisco.iotsp.sample.SampleUsers;
-import com.cisco.iotsp.sample.SampleUsersCreate;
 import com.cisco.iotsp.sample.SampleUserPolicies;
 import com.cisco.iotsp.sample.workflow.SampleExtendThing;
 import com.cisco.iotsp.sample.workflow.SamplePostObservation;
 
 public class TestAll {
 
-	public static boolean testAccounts(String serviceAddr, String token, String accountAlias, String accoutUid) {
+	public static boolean testAccounts(String serviceAddr, String token, String accountAlias, String accountUid) {
 		try {
 			SampleAccounts account = new SampleAccounts(serviceAddr, token);
-			boolean successAccount = account.getAccount(accoutUid);
+			boolean successAccount = account.getAccount(accountUid);
 			boolean successAccounts = account.getAccounts(accountAlias);
 			return successAccount && successAccounts;
 		} catch (Exception e) {
@@ -54,10 +52,9 @@ public class TestAll {
 	public static boolean testUsers(String serviceAddr, String token, String accountAlias) {
 		try {
 			// Test Users service
-			SampleUsersCreate userCreateApi = new SampleUsersCreate(serviceAddr, token);
 			SampleUsers userApi = new SampleUsers(serviceAddr, token);
 			//String policyUid = String.format("%s~~admin-policy", accountAlias);
-			String userUid = userCreateApi.createUser();
+			String userUid = userApi.createUser();
 			System.out.println("Sleep 1 second after create a new user before query");
 			Thread.sleep(1000);
 			userApi.deleteUser(userUid);
@@ -84,8 +81,8 @@ public class TestAll {
 			schema.getSystemSchemas();
 
 			String schemaName1 = "sampleSchemaCustomerAddress";
-			String schemaFile1 = String.format("src/main/resources/file/%s.json", schemaName1);
-
+			String schemaFile1 = String.format("file/%s.json", schemaName1);
+			System.out.printf("\n--- Create schema from %s---\n", schemaFile1);
 			String schemaUid1 = schemaCreate.createSchema(schemaFile1);
 			System.out.println("Sleep 1 second after create the schema before query");
 			Thread.sleep(1000);
@@ -108,12 +105,22 @@ public class TestAll {
 			// Test Things service
 			SampleThingsCreate sampleThingCreate = new SampleThingsCreate(serviceAddr, token);
 			SampleThings sampleThing = new SampleThings(serviceAddr, token);
+			
 			Thing thing = sampleThingCreate.createThingFromJsonFile(accountAlias,
-					"src/main/resources/file/sampleThing.json");
+					"file/sampleThing.json");
 			System.out.println(String.format("The created thing's uid = %s", thing.getUid()));
+			System.out.println("Sleep 1 second after create a new thing before delete");
+			Thread.sleep(1000);
+			sampleThing.deleteThing(thing.getUid());
+			
+			System.out.println("Sleep 1 second after delete the thing before create again");
+			Thread.sleep(1000);
+			
+			thing = sampleThing.createThingFromJsonFile(accountAlias,
+					"file/sampleThing.json");
 			System.out.println("Sleep 1 second after create a new thing before query");
 			Thread.sleep(1000);
-
+			
 			// String thingUid =
 			// "SDK_Test6_Alias||a151c893-c7bc-48d6-8494-7e7775dcf3e5";
 			sampleThing.getThingByUid(thing.getUid());
@@ -173,9 +180,8 @@ public class TestAll {
 	private static boolean testClaims(String serviceAddr, String token) {
 		try {
 			// Test Claims service
-			SampleClaimsCreate claimCreate = new SampleClaimsCreate(serviceAddr, token);
 			SampleClaims claim = new SampleClaims(serviceAddr, token);
-			String claimUid = claimCreate.createClaimFromJsonFile("src/main/resources/file/sampleClaim.json");
+			String claimUid = claim.createClaim();
 			System.out.println("Sleep 1 second after create a new claim before query");
 			Thread.sleep(1000);
 			claim.getClaim(claimUid);
@@ -248,9 +254,9 @@ public class TestAll {
 		String adminPassWd = "incorrect";
 		String adminEmail = String.format("%s@cisco.com", accountAlias);
 
-		String serviceAddr = "10.203.31.49"; // change this to your clueter's IP address
+		String serviceAddr = "iotsp.cisco.com"; // change this to your clueter's IP address
 
-		String accoutUid = SampleAccountsCreate.createAccount(serviceAddr, accountAlias, adminEmail, adminPassWd);
+		String accountUid = SampleAccounts.createAccount(serviceAddr, accountAlias, adminEmail, adminPassWd);
 
 		System.out.println("Sleep 1 second after create a new account before query");
 		Thread.sleep(1000);
@@ -258,7 +264,7 @@ public class TestAll {
 		String token = AuthenticationHelper.getAccessToken(serviceAddr, adminEmail, adminPassWd, "iotspoauth2client",
 				"iotspoauth2client");
 		
-		boolean successAccount = testAccounts(serviceAddr, token, accountAlias, accoutUid);
+		boolean successAccount = testAccounts(serviceAddr, token, accountAlias, accountUid);
 		boolean successPolicy = testUserPolicies(serviceAddr, token);
 		
 		
@@ -276,7 +282,7 @@ public class TestAll {
 		thingApi.deleteThing(thing.getUid());
 
 		SampleAccounts account = new SampleAccounts(serviceAddr, token);
-		account.deleteAccount(accoutUid);
+		account.deleteAccount(accountUid);
 
 		return successAccount && successPolicy && successUser && successSchema && successThing && successPresence & successOb &  claimSuccess;
 	}
@@ -292,7 +298,7 @@ public class TestAll {
 		String adminEmail = String.format("%s@cisco.com", accountAlias);
 
 		String serviceAddr = "10.203.31.49"; // change this to your clueter's IP address
-		String accoutUid = SampleAccountsCreate.createAccount(serviceAddr, accountAlias, adminEmail, adminPassWd);
+		String accountUid = SampleAccounts.createAccount(serviceAddr, accountAlias, adminEmail, adminPassWd);
 
 		System.out.println("Sleep 1 second after create a new account before query");
 		Thread.sleep(1000);
@@ -303,9 +309,8 @@ public class TestAll {
 		boolean obSuccess = true;
 		
 		//Create thing 
-		SampleThingsCreate sampleThingCreate = new SampleThingsCreate(serviceAddr, token);
 		SampleThings thingApi = new SampleThings(serviceAddr, token);
-		Thing thing = sampleThingCreate.createThingFromJsonFile(accountAlias, "src/main/resources/file/sampleThing.json");
+		Thing thing = thingApi.createThingFromJsonFile(accountAlias, "file/sampleThing.json");
 
 		mergeSuccess = testMergeThing(accountAlias, serviceAddr, token);
 
@@ -325,7 +330,7 @@ public class TestAll {
 		obSuccess = testPostObservations(serviceAddr, token, accountAlias, thing.getUid());
 
 		SampleAccounts account = new SampleAccounts(serviceAddr, token);
-		account.deleteAccount(accoutUid);
+		account.deleteAccount(accountUid);
 
 		return mergeSuccess && updateSuccess && obSuccess;
 	}

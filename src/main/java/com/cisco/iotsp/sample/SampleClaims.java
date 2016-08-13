@@ -1,9 +1,10 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.sample;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cisco.iotsp.client.accounts.ApiException;
+import com.cisco.iotsp.client.claims.ApiException;
 import com.cisco.iotsp.client.claims.ClaimsApi;
 import com.cisco.iotsp.client.claims.model.FilterCriteria;
 import com.cisco.iotsp.client.claims.model.FilterCriteria.ValueFilterTypeEnum;
@@ -13,6 +14,9 @@ import com.cisco.iotsp.client.claims.model.SortCriteria;
 import com.cisco.iotsp.client.claims.model.SortCriteria.SortOrderEnum;
 import com.cisco.iotsp.client.claims.model.ThingClaim;
 import com.cisco.iotsp.client.claims.model.ThingClaimFilter;
+import com.cisco.iotsp.client.claims.model.ThingClaimRequest;
+import com.cisco.iotsp.client.claims.model.ThingDescriptor;
+import com.cisco.iotsp.client.claims.model.UniqueIdentifier;
 import com.cisco.iotsp.client.claims.model.ThingClaimFilter.FilterOperatorEnumEnum;
 import com.cisco.iotsp.helper.ServiceApiHelper;
 
@@ -24,6 +28,47 @@ public class SampleClaims {
 
 		api = ServiceApiHelper.getClaimsApi(serviceAddr, accessToken);
 	}
+	
+	public String createClaim() {
+		try {
+			ThingClaimRequest request = new ThingClaimRequest();
+			request.setMake("Cisco Systems");
+			request.setModel("SensorX");
+			UniqueIdentifier uniqueIdentifiers = new UniqueIdentifier();
+			uniqueIdentifiers.setManufacturingId("a151c893-c7bc-48d6-8494-7e7775dcf3e5");
+			uniqueIdentifiers.setMacAddress("38:4f:3e:99:47:29");
+			uniqueIdentifiers.setSerialNumber("d361945a-453b-4504-9226-eb825dda7822");
+			request.setUniqueIdentifiers(uniqueIdentifiers);
+			
+			ThingDescriptor thingDetails = new ThingDescriptor();
+			thingDetails.setName("sensorABC");
+			thingDetails.setType("tempSensor");
+			thingDetails.setDescription("Temperature Sensor in Control Room");
+			request.setThingDetails(thingDetails);
+			List<String> tags = new ArrayList<String>();
+			tags.add("Control Room");
+			tags.add("Temperature Sensor");
+			request.setTags(tags);
+								
+			ThingClaim createdClaim = api.createClaim(request);
+			System.out.printf("\n--- createClaim is successful. New Claim: \n%s", createdClaim);
+
+			return createdClaim.getUid();
+		} catch (ApiException apiE) {
+			System.out.printf("\n--- createClaim failed !!! ---");
+			System.out.printf("\ncode=%d\n msg=%s\n header=%s\n body=%s\n", apiE.getCode(), apiE.getMessage(),
+					apiE.getResponseHeaders(), apiE.getResponseBody());
+			System.out.println(apiE);
+			apiE.printStackTrace();
+			return "";
+		} catch (Exception e) {
+			System.out.printf("\n--- createClaim failed !!! ---");
+			System.out.println(e);
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 
 	public boolean getClaim(String claimUid) {
 		boolean success = false;

@@ -1,5 +1,7 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.sample;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import com.cisco.iotsp.client.schemas.model.SchemaCreateRequest;
 import com.cisco.iotsp.client.schemas.model.SchemaCreateRequest.SchemaTypeEnum;
 import com.cisco.iotsp.helper.JsonHelper;
 import com.cisco.iotsp.helper.ServiceApiHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SampleSchemasCreate {
 
@@ -21,25 +24,11 @@ public class SampleSchemasCreate {
 		api = ServiceApiHelper.getSchemasApi(serviceAddr, accessToken);
 	}
 
-	public String createSchema(String schemaFilePath) {
+	public String createSchema(String schemaFilePathInResources) {
 		String newSchemaUid = "";
 		try {
-			Map<String, Object> mapRoot = JsonHelper.convertJsonFileToMap(schemaFilePath);
-			System.out.println(String.format("Parse file %s", schemaFilePath));
-			System.out.println(mapRoot.toString());
-
-			String schemaName = mapRoot.get("name").toString();
-			SchemaTypeEnum schemaType = SchemaTypeEnum
-					.valueOf(mapRoot.get("schemaType").toString().toUpperCase(Locale.ENGLISH));
-			SchemaCreateRequest newSchemaObj = new SchemaCreateRequest();
-			newSchemaObj.setName(schemaName);
-			newSchemaObj.setSchemaType(schemaType);
-
-			Object objSchema = mapRoot.get("schema");
-			String jsonSchema = JsonHelper.convertPojoToJsonString(objSchema);
-			Map<String, Object> mapSchema = JsonHelper.convertJsonStringToMap(jsonSchema);
-			newSchemaObj.setSchema(mapSchema);
-
+			ObjectMapper mapper = new ObjectMapper();			
+			SchemaCreateRequest newSchemaObj = mapper.readValue(ClassLoader.getSystemResourceAsStream(schemaFilePathInResources), SchemaCreateRequest.class);
 			Schema createdSchema = api.createSchema(newSchemaObj);
 			if (createdSchema != null) {
 				newSchemaUid = createdSchema.getUid();

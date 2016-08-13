@@ -8,11 +8,11 @@ A software development kit to enable you to build Java applications on the IOT S
 
 1. Download or clone Cisco IOT Software Platform SDK in Java
 2. Install JDK, recommend version 8
-3. Dependencies are managed by gradle. Run the following command to download dependencies and build the SDK:
-    on Windows:
-      gradlew.bat build
-    on Mac or unix system:
-      ./gradlew build
+3. Dependencies are managed by gradle. Run the following command to download dependencies and build the SDK: </br>
+    on Windows: </br>
+      **_gradlew.bat build_** </br>
+    on Mac or unix system: </br>
+      **_./gradlew build_** 
 4. Upon successful build, jar file iotsp-java-sdk-1.0.0-all.jar will be generated
 5. Include the jar file iotsp-java-sdk-1.0.0-all.jar in your Java project
 
@@ -52,4 +52,12 @@ Once SDK is downloaded or cloned, you will see a project structure like below:
 ├── gradlew                                                 # gradle wrapper to be executed in Mac or Unix system to build SDK
 └── gradlew.bat                                             # gradle wrapper to be executed in Windows platform to build SDK
 ```
-***Note: when run testing app, it creates accounts, users, schemas, devices on IoTSP, then delete all of them if testing app is ran successfully.
+        
+Run the included TestAll.java application using one of these methods:
+
+1. Run TestAll.java inside an IDE, such as Eclipse. </br>
+or </br>
+2. Build the SDK on your target platform using step 3 (above), and then enter the following command in the CLI: </br>
+    **_java -jar  iotsp-java-sdk-1.0.0-all.jar_**
+ 
+Note: The TestAll.java application creates accounts, users, schemas, and devices on IoTSP, and then deletes them if the app executes successfully.

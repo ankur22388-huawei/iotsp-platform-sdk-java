@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 /**
  * API Documentation
  * Credential Management holds credentials for things and users.  Credential Management can import or create new credentials for a thing/user, authenticate credentials, reset credentials and delete credentials.

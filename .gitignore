@@ -1,7 +1,8 @@
 *.class
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+.mtj
+.tmp/
 
 # Package Files #
 *.jar
@@ -25,4 +26,6 @@ build
 codegen
 codegen.sh
 codegen2.sh
+insert_copyright.sh
+copyright.txt
 swagger-codegen-cli.jar.jar

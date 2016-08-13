@@ -1,9 +1,11 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.sample;
 
 import com.cisco.iotsp.client.accounts.AccountsApi;
 import com.cisco.iotsp.client.accounts.ApiException;
 import com.cisco.iotsp.client.accounts.model.Account;
 import com.cisco.iotsp.client.accounts.model.PageAccount;
+import com.cisco.iotsp.helper.AccountHelper;
 import com.cisco.iotsp.helper.ServiceApiHelper;
 
 public class SampleAccounts {
@@ -23,6 +25,17 @@ public class SampleAccounts {
 		api = ServiceApiHelper.getAccountsApi(serviceAddr, accessToken);
 	 }
 	  
+	public static String createAccount(String serverAddress, String accountAlias, String adminEmail, String adminPassWd) {
+
+		String accountName = "SDK Test Account";
+		String accountType = "TRIAL";
+		String adminFirstName = "admin";
+		String adminLastName = "MyLastName";
+		
+		String accountUid = AccountHelper.createAccount(serverAddress, accountAlias, accountName, accountType,
+				adminFirstName, adminLastName, adminPassWd, adminEmail);
+		return accountUid;
+	}
 	
 	public boolean getAccount(String accountUid){
 	        //get account by account uid.  For now, account service only supports get your own account
@@ -76,10 +89,10 @@ public class SampleAccounts {
         }
  }
 
-	public boolean  deleteAccount(String accoutUid) {
+	public boolean  deleteAccount(String accountUid) {
 	        try {
 	        	
-	        	Account deletedAccount = api.deleteAccount(accoutUid);
+	        	Account deletedAccount = api.deleteAccount(accountUid);
 		        System.out.println("\nDelete account is successful. Account is deleted: ");
 		     	accountUid = deletedAccount.getUid();
 	        	System.out.printf("\nTest, deleteAccount for uid %s is successful. Account is: %s ", accountUid, deletedAccount);
