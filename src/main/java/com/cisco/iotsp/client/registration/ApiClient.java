@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.client.registration;
 
 import javax.ws.rs.client.Client;

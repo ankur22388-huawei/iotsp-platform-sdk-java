@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 package com.cisco.iotsp.sample.workflow;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class SamplePostObservation {
 		try {
 			// Step 1. Create thing
 			ObjectMapper mapper = new ObjectMapper();
-			ThingCreateRequest thingRequest = mapper.readValue(new File("src/main/resources/file/sampleThing.json"), ThingCreateRequest.class);
+			ThingCreateRequest thingRequest = mapper.readValue(ClassLoader.getSystemResourceAsStream("file/sampleThing.json"), ThingCreateRequest.class);
 			for (SectionSchemaPair section : thingRequest.getSectionSchemas()) {
 				String schemaUid =  section.getSchemaUid().replaceFirst("accountAlias", accountAlias);	
 				section.setSchemaUid(schemaUid);

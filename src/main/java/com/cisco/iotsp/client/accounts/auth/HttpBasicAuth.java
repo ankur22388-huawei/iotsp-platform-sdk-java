@@ -1,3 +1,4 @@
+//Copyright (c) 2016 by Cisco Systems, Inc. All rights reserved.
 /**
  * API documentation for Account management service
  * The service provides APIs for managing the accounts on Cisco IOT Software Platform
